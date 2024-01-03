@@ -112,6 +112,21 @@
             setCookie('username', storedUsername, 365);  // Expires in 365 days
         }
 
+        // Function to handle the visibility of the "Change Username" button
+        function updateUsernameButtonVisibility() {
+            const changeUsernameButton = document.getElementById('change-username-button');
+            if (storedUsername.toLowerCase() === 'anonymous') {
+                // Show the button if the username is 'Anonymous'
+                changeUsernameButton.style.display = 'inline-block';
+            } else {
+                // Hide the button if the username is not 'Anonymous'
+                changeUsernameButton.style.display = 'none';
+            }
+        }
+    
+        // Initial visibility check
+        updateUsernameButtonVisibility();
+        
         function sendMessage() {
             var messageInput = document.getElementById('message');
             var message = messageInput.value;
