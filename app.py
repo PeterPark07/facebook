@@ -24,7 +24,7 @@ def send():
     if username and message_text:
         if '/persist' in message_text:
             should_persist = True
-            message_text.replace('/persist','').split()
+            message_text.replace('/persist','')
         # Store the message in the database
         timestamp = datetime.utcnow()
         new_message = {'username': username, 'message': message_text, 'timestamp': timestamp, 'persist': should_persist}
