@@ -53,8 +53,13 @@
         }
         
         #change-username-button {
-            top: 35px; /* Adjust top position to avoid overlapping with delete button */
+            position: absolute;
+            top: 35px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
         }
+
     </style>
     
 </head>
@@ -132,6 +137,17 @@
             }
         }
 
+        // Function to handle the keypress event in the message input field
+        function handleKeyPress(event) {
+            // Check if the pressed key is Enter (key code 13)
+            if (event.keyCode === 13) {
+                sendMessage();
+            }
+        }
+    
+        // Attach the handleKeyPress function to the keypress event of the message input field
+        document.getElementById('message').addEventListener('keypress', handleKeyPress);
+        
         function changeUsername() {
             const newUsername = prompt('Enter your new username (limit: 20 characters):', storedUsername);
 
