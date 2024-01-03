@@ -53,7 +53,11 @@
             <input type="text" id="message" name="message" placeholder="Message" maxlength="100" required>
             <button type="button" onclick="sendMessage()">Send</button>
         </form>
+
+        <!-- Add the delete button -->
+        <button id="delete-button" onclick="deleteChats()">Delete Chats</button>
     </div>
+
     
     <!-- Add the getCookie and setCookie functions -->
     <script>
@@ -109,6 +113,33 @@
             }
         }
 
+        function deleteChats() {
+            // Ask for the password before deleting chats
+            const password = prompt('Enter password to delete chats:');
+            
+            // Perform server-side validation of the password
+            if (password) {
+                fetch('/delete-chats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'password': password,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Chats deleted successfully
+                        updateChatBox();
+                    } else {
+                        alert('Invalid password. Chats not deleted.');
+                    }
+                });
+            }
+        }
+        
         function updateChatBox() {
             fetch('/')
                 .then(response => response.text())
