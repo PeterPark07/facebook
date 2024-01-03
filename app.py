@@ -19,13 +19,14 @@ def index():
 def send():
     username = request.form.get('username')
     message_text = request.form.get('message')
-
+    should_persist = request.form.get('persist', False) == 'true'
+    
     if username and message_text:
         # Store the message in the database
         timestamp = datetime.utcnow()
-        new_message = {'username': username, 'message': message_text, 'timestamp': timestamp}
+        new_message = {'username': username, 'message': message_text, 'timestamp': timestamp, 'persist': should_persist}
         messages_collection.insert_one(new_message)
-
+        
         return jsonify({'success': True})
 
     return jsonify({'success': False, 'error': 'Username and message are required.'})
@@ -37,8 +38,9 @@ def delete_chats():
     # Implement your password validation logic here
     # For simplicity, let's assume the password is 'secret'
     if password == 'secret':
-        # Delete all messages from the collection
-        messages_collection.delete_many({})
+        # Delete messages based on persistence flag
+        messages_collection.delete_many({'persist': False})
+        
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Invalid password.'})
