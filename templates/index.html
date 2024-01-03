@@ -60,6 +60,7 @@
             padding: 5px 10px;
             font-size: 12px;
         }
+
     </style>
     
 </head>
@@ -67,10 +68,7 @@
     <div id="chat-container">
         <div id="chat-box">
             {% for message in messages %}
-                <p>
-                    <strong style="color: {{ message.color }};">{{ message.username }}:</strong>
-                    {{ message.message }}
-                </p>
+                <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
             {% endfor %}
         </div>
         <form id="message-form">
@@ -91,25 +89,15 @@
             const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             return match ? match[2] : null;
         }
-    
-        function setCookie(name, value, days, color) {
+
+        function setCookie(name, value, days) {
             const expires = new Date();
             expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-            document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-            document.cookie = `color=${color};expires=${expires.toUTCString()};path=/`;
+            document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
         }
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-        // Check if the username and color are stored in cookies
+        // Check if the username is stored in a cookie
         let storedUsername = getCookie('username');
-        let storedColor = getCookie('color');
 
         // If username is not found in the cookie or user rejects the prompt, set to "Anonymous"
         if (!storedUsername) {
@@ -119,10 +107,9 @@
             if (storedUsername === null || storedUsername.trim() === '' || storedUsername.length > 20) {
                 storedUsername = 'Anonymous';
             }
-            // Generate a random color for the user
-            storedColor = getRandomColor();
-            // Store the username and color in cookies
-            setCookie('username', storedUsername, 365, storedColor);  // Expires in 365 days
+
+            // Store the username in a cookie
+            setCookie('username', storedUsername, 365);  // Expires in 365 days
         }
 
         // Function to handle the visibility of the "Change Username" button
