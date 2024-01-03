@@ -68,11 +68,7 @@
     <div id="chat-container">
         <div id="chat-box">
             {% for message in messages %}
-                <p>
-                    <strong>{{ message.username }}:</strong>
-                    {{ message.message }}
-                    <span class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</span>
-                </p>
+                <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
             {% endfor %}
         </div>
         <form id="message-form">
@@ -210,13 +206,6 @@
                 });
             }
         }
-
-        function formatTimestamp(timestamp) {
-            const date = new Date(timestamp);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-}
         
         function updateChatBox() {
             const chatBox = document.getElementById('chat-box');
