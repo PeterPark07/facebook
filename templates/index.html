@@ -208,10 +208,16 @@
         }
         
         function updateChatBox() {
+            const chatBox = document.getElementById('chat-box');
+            
             fetch('/')
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('chat-box').innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('chat-box').innerHTML;
+                    // Update the chat box content
+                    chatBox.innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('chat-box').innerHTML;
+    
+                    // Scroll to the bottom of the chat box
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 });
         }
 
