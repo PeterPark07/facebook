@@ -12,7 +12,7 @@ db = mongo_client['chat']
 messages_collection = db['messages']
 
 # Set the timezone to Indian Standard Time (IST)
-indian_timezone = pytz.timezone('Asia/Kolkata')
+indian_timezone = pytz.timezone('Asia/Calcutta')
 
 @app.route('/')
 def index():
