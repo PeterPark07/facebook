@@ -17,9 +17,10 @@
             flex-direction: column;
             height: 100vh;
             justify-content: space-between;
+            position: relative; /* Added position relative to create a positioning context for absolute positioning */
             overflow: hidden; 
         }
-
+        
         #chat-box {
             flex-grow: 1;
             overflow-y: auto;
@@ -42,6 +43,15 @@
         #message-form input {
             flex-grow: 1;
         }
+
+        #delete-button {
+            position: absolute; /* Position absolute for absolute positioning */
+            top: 5px; /* Adjust top position for spacing from the top */
+            right: 10px; /* Adjust right position for spacing from the right */
+            padding: 5px 10px; /* Adjust padding for button size */
+            font-size: 12px; /* Adjust font size for button text */
+        }
+        
     </style>
 </head>
 <body>
