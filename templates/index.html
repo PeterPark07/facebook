@@ -39,10 +39,21 @@
         #message-form input,
         #message-form button {
             margin-right: 10px;
+            font-size: 16px; /* Increase font size for the input and button */
         }
         
         #message-form input {
             flex-grow: 1;
+        }
+
+        #send-button {
+            background-color: #4CAF50; /* Green background color for the send button */
+            color: white;
+            padding: 10px 20px; /* Larger padding for a bigger button */
+            font-size: 16px; /* Font size for the send button */
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
         #delete-button,
@@ -70,7 +81,7 @@
         <!-- Message input form -->
         <form id="message-form">
             <input type="text" id="message" name="message" placeholder="Message" maxlength="100" required>
-            <button type="button" onclick="sendMessage()">Send</button>
+            <button type="button" id="send-button" onclick="sendMessage()">Send</button>
         </form>
 
         <!-- Delete and Change Username buttons -->
