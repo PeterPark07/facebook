@@ -69,14 +69,21 @@
         }
 
         // Check if the username is stored in a cookie
-        const storedUsername = getCookie('username');
+        let storedUsername = getCookie('username');
 
-        // If username is not found in the cookie, prompt the user
-        const username = storedUsername || prompt('Please enter your username:');
+        // If username is not found in the cookie or user rejects the prompt, set to "Anonymous"
+        if (!storedUsername) {
+            storedUsername = prompt('Please enter your username (limit: 20 characters):', 'Anonymous');
 
-        // Store the username in a cookie
-        setCookie('username', username, 365);  // Expires in 365 days
-        
+            // Apply input validation for the username
+            if (storedUsername === null || storedUsername.trim() === '' || storedUsername.length > 20) {
+                storedUsername = 'Anonymous';
+            }
+
+            // Store the username in a cookie
+            setCookie('username', storedUsername, 365);  // Expires in 365 days
+        }
+
         function sendMessage() {
             var message = document.getElementById('message').value;
 
@@ -87,7 +94,7 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        'username': username,
+                        'username': storedUsername,
                         'message': message,
                     }),
                 })
