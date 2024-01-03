@@ -37,7 +37,7 @@ def send():
         # Store the message in the database
         # Localize the timestamp to Indian timezone
         timestamp = datetime.utcnow()
-        timestamp = timestamp..localize(indian_timezone)
+        timestamp = indian_timezone.localize(timestamp)
         
         new_message = {
             'username': username,
