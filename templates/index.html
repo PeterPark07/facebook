@@ -49,8 +49,6 @@
             {% endfor %}
         </div>
         <form id="message-form">
-            <label for="username">User:</label>
-            <input type="text" id="username" name="username" placeholder="Username"  maxlength="20" value="" required>
             <label for="message">Message:</label>
             <input type="text" id="message" name="message" placeholder="Message" maxlength="100" required>
             <button type="button" onclick="sendMessage()">Send</button>
@@ -58,17 +56,19 @@
     </div>
     
     <script>
-        // Load the username from localStorage if available
-        document.getElementById('username').value = localStorage.getItem('username') || '';
+        // Check if the username is stored in a cookie
+        const storedUsername = getCookie('username');
 
+        // If username is not found in the cookie, prompt the user
+        const username = storedUsername || prompt('Please enter your username:');
+
+        // Store the username in a cookie
+        setCookie('username', username, 365);  // Expires in 365 days
+        
         function sendMessage() {
-            var username = document.getElementById('username').value;
             var message = document.getElementById('message').value;
 
-            if (username && message) {
-                // Save the username to localStorage
-                localStorage.setItem('username', username);
-                
+            if (message) {               
                 fetch('/send', {
                     method: 'POST',
                     headers: {
