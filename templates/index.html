@@ -52,7 +52,11 @@
             font-size: 12px; /* Adjust font size for button text */
         }
         
+        #change-username-button {
+            top: 35px; /* Adjust top position to avoid overlapping with delete button */
+        }
     </style>
+    
 </head>
 <body>
     <div id="chat-container">
@@ -69,6 +73,8 @@
 
         <!-- Add the delete button -->
         <button id="delete-button" onclick="deleteChats()">Clear Chats</button>
+        <!-- Add the change username button -->
+        <button id="change-username-button" onclick="changeUsername()">Change Username</button>
     </div>
 
     
@@ -126,6 +132,19 @@
             }
         }
 
+        function changeUsername() {
+            const newUsername = prompt('Enter your new username (limit: 20 characters):', storedUsername);
+
+            // Apply input validation for the new username
+            if (newUsername !== null && newUsername.trim() !== '' && newUsername.length <= 20) {
+                storedUsername = newUsername;
+                setCookie('username', storedUsername, 365);  // Expires in 365 days
+                updateChatBox();
+            } else {
+                alert('Invalid username. Please try again.');
+            }
+        }
+        
         function deleteChats() {
             // Ask for the password before deleting chats
             const password = prompt('Enter password to delete chats:');
