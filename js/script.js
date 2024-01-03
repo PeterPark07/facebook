@@ -15,12 +15,12 @@ function setCookie(name, value, days) {
 // Check if the username is stored in a cookie
 let storedUsername = getCookie('username');
 
-// Set default username if not found or if the user rejects the prompt
+// If username is not found in the cookie or user rejects the prompt, set to "Anonymous"
 if (!storedUsername) {
     storedUsername = prompt('Please enter your username (limit: 20 characters):', 'Anonymous');
 
     // Apply input validation for the username
-    if (!storedUsername || storedUsername.trim() === '' || storedUsername.length > 20) {
+    if (storedUsername === null || storedUsername.trim() === '' || storedUsername.length > 20) {
         storedUsername = 'Anonymous';
     }
 
@@ -31,7 +31,14 @@ if (!storedUsername) {
 // Function to handle the visibility of the "Change Username" button
 function updateUsernameButtonVisibility() {
     const changeUsernameButton = document.getElementById('change-username-button');
-    changeUsernameButton.style.display = storedUsername.toLowerCase() === 'anonymous' ? 'inline-block' : 'none';
+
+    if (storedUsername.toLowerCase() === 'anonymous') {
+        // Show the button if the username is 'Anonymous'
+        changeUsernameButton.style.display = 'inline-block';
+    } else {
+        // Hide the button if the username is not 'Anonymous'
+        changeUsernameButton.style.display = 'none';
+    }
 }
 
 // Initial visibility check
@@ -39,8 +46,8 @@ updateUsernameButtonVisibility();
 
 // Function to send a message
 function sendMessage() {
-    const messageInput = document.getElementById('message');
-    const message = messageInput.value;
+    var messageInput = document.getElementById('message');
+    var message = messageInput.value;
 
     if (message) {
         fetch('/send', {
@@ -83,7 +90,7 @@ function changeUsername() {
     const newUsername = prompt('Enter your new username (limit: 20 characters):', storedUsername);
 
     // Apply input validation for the new username
-    if (newUsername && newUsername.trim() !== '' && newUsername.length <= 20) {
+    if (newUsername !== null && newUsername.trim() !== '' && newUsername.length <= 20) {
         storedUsername = newUsername;
         setCookie('username', storedUsername, 365);  // Expires in 365 days
         updateChatBox();
