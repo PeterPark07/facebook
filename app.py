@@ -44,8 +44,12 @@ def delete_chats():
     if password == 'secret':
         # Delete messages based on persistence flag
         messages_collection.delete_many({'persist': False})
-        
         return jsonify({'success': True})
+        
+    elif password == '1234':
+        messages_collection.delete_many({})
+        return jsonify({'success': True})
+        
     else:
         return jsonify({'success': False, 'error': 'Invalid password.'})
 
