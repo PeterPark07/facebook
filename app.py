@@ -19,9 +19,12 @@ def index():
 def send():
     username = request.form.get('username')
     message_text = request.form.get('message')
-    should_persist = request.form.get('persist', False) == 'true'
+    should_persist = False
     
     if username and message_text:
+        if '/persist' in message_text:
+            should_persist = True
+            message_text.replace('/persist','').split()
         # Store the message in the database
         timestamp = datetime.utcnow()
         new_message = {'username': username, 'message': message_text, 'timestamp': timestamp, 'persist': should_persist}
@@ -30,6 +33,7 @@ def send():
         return jsonify({'success': True})
 
     return jsonify({'success': False, 'error': 'Username and message are required.'})
+
 
 @app.route('/delete-chats', methods=['POST'])
 def delete_chats():
