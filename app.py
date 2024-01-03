@@ -37,11 +37,11 @@ def send():
 
 @app.route('/delete-chats', methods=['POST'])
 def delete_chats():
-    password = request.form.get('password')
+    password = request.form.get('pin')
 
     # Implement your password validation logic here
     # For simplicity, let's assume the password is 'secret'
-    if password == 'secret':
+    if password == '0':
         # Delete messages based on persistence flag
         messages_collection.delete_many({'persist': False})
         return jsonify({'success': True})
