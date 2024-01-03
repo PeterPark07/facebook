@@ -13,6 +13,11 @@ messages_collection = db['messages']
 @app.route('/')
 def index():
     messages = messages_collection.find()
+
+    # Format timestamps for display
+    for message in messages:
+        message['timestamp_formatted'] = format_timestamp(message['timestamp'])
+    
     return render_template('index.html', messages=messages)
 
 @app.route('/send', methods=['POST'])
