@@ -113,7 +113,8 @@
         }
 
         function sendMessage() {
-            var message = document.getElementById('message').value;
+            var messageInput = document.getElementById('message');
+            var message = messageInput.value;
 
             if (message) {               
                 fetch('/send', {
