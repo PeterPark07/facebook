@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chat Portal</title>
+    <title>Chat Room</title>
     <style>
         /* Styles for better visibility and layout */
         body {
@@ -29,12 +29,14 @@
             box-sizing: content-box;
             max-height: calc(100vh - 50px);
         }
-
+        
         #message-form {
             display: flex;
             padding: 10px;
             box-sizing: content-box;
+            align-self: flex-end; /* Position the form at the bottom */
         }
+
 
         #message-form input,
         #message-form button {
