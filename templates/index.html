@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat Portal</title>
+</head>
+<body>
+    <div>
+        <h1>Chat Portal</h1>
+        <div id="chat-box">
+            {% for message in messages %}
+                <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
+            {% endfor %}
+        </div>
+        <form id="message-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message" required>
+            <br>
+            <button type="button" onclick="sendMessage()">Send</button>
+        </form>
+    </div>
+    
+    <script>
+        function sendMessage() {
+            var username = document.getElementById('username').value;
+            var message = document.getElementById('message').value;
+
+            if (username && message) {
+                fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'username': username,
+                        'message': message,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('message-form').reset();
+                        // Optionally, update the chat box without refreshing the page
+                        updateChatBox();
+                    }
+                });
+            }
+        }
+
+        function updateChatBox() {
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('chat-box').innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('chat-box').innerHTML;
+                });
+        }
+
+        // Optionally, set up periodic updates (e.g., every 5 seconds)
+        // setInterval(updateChatBox, 5000);
+    </script>
+</body>
+</html>
