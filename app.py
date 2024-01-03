@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 from datetime import datetime
+import pytz
 import os
 
 app = Flask(__name__)
@@ -9,6 +10,9 @@ app = Flask(__name__)
 mongo_client = MongoClient(os.getenv('mongodb'))
 db = mongo_client['chat']
 messages_collection = db['messages']
+
+# Set the timezone to Indian Standard Time (IST)
+indian_timezone = pytz.timezone('Asia/Kolkata')
 
 @app.route('/')
 def index():
@@ -27,10 +31,21 @@ def send():
         # Check for persistence flag in the message
         if '/persist' in user_message:
             should_persist = True
+            # Remove the persistence flag from the message
             user_message = user_message.replace('/persist', '')
+        
         # Store the message in the database
+        # Localize the timestamp to Indian timezone
         timestamp = datetime.utcnow()
-        new_message = {'username': username, 'message': user_message, 'timestamp': timestamp, 'persist': should_persist}
+        timestamp = timestamp.astimezone(indian_timezone)
+        
+        new_message = {
+            'username': username,
+            'message': user_message,
+            'timestamp': timestamp,
+            'persist': should_persist
+        }
+        
         messages_collection.insert_one(new_message)
         
         return jsonify({'success': True})
