@@ -20,13 +20,13 @@
         #chat-box {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 10px;
+
             box-sizing: border-box;
         }
 
         #message-form {
             display: flex;
-            padding: 10px;
+
             box-sizing: border-box;
         }
 
@@ -34,7 +34,10 @@
         #message-form button {
             margin-right: 10px;
         }
-
+        
+        #message-form input {
+            flex-grow: 1;
+        }
     </style>
 </head>
 <body>
@@ -45,7 +48,7 @@
             {% endfor %}
         </div>
         <form id="message-form">
-            <label for="username">Username:</label>
+            <label for="username">User:</label>
             <input type="text" id="username" name="username" placeholder="Username" required>
             <label for="message">Message:</label>
             <input type="text" id="message" name="message" placeholder="Message" maxlength="100" required>
