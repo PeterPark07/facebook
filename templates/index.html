@@ -181,18 +181,18 @@
         }
         
         function deleteChats() {
-            // Ask for the password before deleting chats
-            const password = prompt('Enter password to delete chats:');
+            // Ask for the pin before deleting chats
+            const pin = prompt('Enter pin to delete chats:');
             
-            // Perform server-side validation of the password
-            if (password) {
+            // Perform server-side validation of the pin
+            if (pin) {
                 fetch('/delete-chats', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        'password': password,
+                        'pin': pin,
                     }),
                 })
                 .then(response => response.json())
@@ -201,7 +201,7 @@
                         // Chats deleted successfully
                         updateChatBox();
                     } else {
-                        alert('Invalid password. Chats not deleted.');
+                        alert('Invalid pin. Chats not deleted.');
                     }
                 });
             }
