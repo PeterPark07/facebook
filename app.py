@@ -10,9 +10,26 @@ client = MongoClient(os.getenv('mongodb'))
 db = client['chat']
 messages_collection = db['messages']
 
+from datetime import datetime, timezone
+
+# ...
+
 def format_timestamp(timestamp):
-    formatted_timestamp = datetime.utcfromtimestamp(timestamp).strftime('%H:%M')
+    if isinstance(timestamp, (int, float)):
+        # If timestamp is already a Unix timestamp, convert it to datetime
+        timestamp = datetime.utcfromtimestamp(timestamp)
+    elif not isinstance(timestamp, datetime):
+        # If timestamp is neither Unix timestamp nor datetime, raise an exception
+        raise ValueError("Invalid timestamp format")
+
+    # Convert timestamp to UTC
+    timestamp_utc = timestamp.replace(tzinfo=timezone.utc)
+    
+    # Format the UTC timestamp
+    formatted_timestamp = timestamp_utc.strftime('%H:%M')
+    
     return formatted_timestamp
+
 
 
 @app.route('/')
