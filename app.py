@@ -10,6 +10,11 @@ client = MongoClient(os.getenv('mongodb'))
 db = client['chat']
 messages_collection = db['messages']
 
+def format_timestamp(timestamp):
+    formatted_timestamp = datetime.utcfromtimestamp(timestamp).strftime('%H:%M')
+    return formatted_timestamp
+
+
 @app.route('/')
 def index():
     messages = messages_collection.find()
