@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Chat Portal</title>
     <style>
-        /* Add some styling for better visibility */
+        /* Styles for better visibility and layout */
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* Remove default margin to ensure full screen usage */
-            padding: 0; /* Remove default padding */
-            background-color: #bbd7f0; /* Light blue background color */
+            margin: 0;
+            padding: 0;
+            background-color: #bbd7f0;
         }
 
         #chat-container {
@@ -18,7 +18,7 @@
             flex-direction: column;
             height: 100vh;
             justify-content: space-between;
-            position: relative; /* Added position relative to create a positioning context for absolute positioning */
+            position: relative;
             overflow: hidden; 
         }
         
@@ -27,7 +27,7 @@
             overflow-y: auto;
             padding: 10px;
             box-sizing: content-box;
-            max-height: calc(100vh - 50px); /* Adjust max height to leave space for the form and button */
+            max-height: calc(100vh - 50px);
         }
 
         #message-form {
@@ -45,39 +45,36 @@
             flex-grow: 1;
         }
 
-        #delete-button {
-            position: absolute; /* Position absolute for absolute positioning */
-            top: 5px; /* Adjust top position for spacing from the top */
-            right: 10px; /* Adjust right position for spacing from the right */
-            padding: 5px 10px; /* Adjust padding for button size */
-            font-size: 12px; /* Adjust font size for button text */
-        }
-        
+        #delete-button,
         #change-username-button {
             position: absolute;
-            top: 35px;
             right: 10px;
             padding: 5px 10px;
             font-size: 12px;
         }
 
+        #delete-button { top: 5px; }
+        #change-username-button { top: 35px; }
     </style>
 </head>
 <body>
+    <!-- Main chat container -->
     <div id="chat-container">
+        <!-- Chat messages display -->
         <div id="chat-box">
             {% for message in messages %}
                 <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
             {% endfor %}
         </div>
+
+        <!-- Message input form -->
         <form id="message-form">
             <input type="text" id="message" name="message" placeholder="Message" maxlength="100" required>
             <button type="button" onclick="sendMessage()">Send</button>
         </form>
 
-        <!-- Add the delete button -->
+        <!-- Delete and Change Username buttons -->
         <button id="delete-button" onclick="deleteChats()">Clear Chats</button>
-        <!-- Add the change username button -->
         <button id="change-username-button" onclick="changeUsername()">Change Username</button>
     </div>
 
