@@ -132,9 +132,6 @@
         var message = messageInput.value;
 
         if (message) {
-            // Check if the message contains the /persist command
-            const shouldPersist = message.toLowerCase().includes('/persist');
-
             fetch('/send', {
                 method: 'POST',
                 headers: {
@@ -143,7 +140,6 @@
                 body: new URLSearchParams({
                     'username': storedUsername,
                     'message': message,
-                    'persist': shouldPersist, // Pass the persist flag to the server
                 }),
             })
             .then(response => response.json())
