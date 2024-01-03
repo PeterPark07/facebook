@@ -35,6 +35,8 @@
             padding: 10px;
             box-sizing: content-box;
             position: fixed; /* Keep the form visible even when scrolling */
+            bottom: 0; /* Stick to the bottom of the screen */
+            width: 100%; /* Take the full width of the screen */
         }
 
         #message-form input,
@@ -75,7 +77,9 @@
         <!-- Chat messages display -->
         <div id="chat-box">
             {% for message in messages %}
-                <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
+                <p>
+                    <strong>{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} - {{ message.username }}:</strong> {{ message.message }}
+                </p>
             {% endfor %}
         </div>
 
