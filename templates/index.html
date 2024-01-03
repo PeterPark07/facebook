@@ -4,10 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Chat Portal</title>
+    <style>
+        /* Add some styling for better visibility */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        #message-form {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <h1>Chat Portal</h1>
+    <div id="chat-container">
         <div id="chat-box">
             {% for message in messages %}
                 <p><strong>{{ message.username }}:</strong> {{ message.message }}</p>
@@ -16,10 +37,8 @@
         <form id="message-form">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
-            <br>
             <label for="message">Message:</label>
             <input type="text" id="message" name="message" required>
-            <br>
             <button type="button" onclick="sendMessage()">Send</button>
         </form>
     </div>
