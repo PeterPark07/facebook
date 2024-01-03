@@ -15,7 +15,6 @@ def index():
     messages = messages_collection.find()
     return render_template('index.html', messages=messages)
 
-
 @app.route('/send', methods=['POST'])
 def send():
     username = request.form.get('username')
@@ -31,6 +30,18 @@ def send():
 
     return jsonify({'success': False, 'error': 'Username and message are required.'})
 
+@app.route('/delete-chats', methods=['POST'])
+def delete_chats():
+    password = request.form.get('password')
+
+    # Implement your password validation logic here
+    # For simplicity, let's assume the password is 'secret'
+    if password == 'secret':
+        # Delete all messages from the collection
+        messages_collection.delete_many({})
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid password.'})
 
 if __name__ == '__main__':
     app.run(debug=True)
