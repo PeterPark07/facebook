@@ -71,7 +71,7 @@
                 <p>
                     <strong>{{ message.username }}:</strong>
                     {{ message.message }}
-                    <span class="message-timestamp">{{ message.timestamp_formatted }}</span>
+                    <span class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</span>
                 </p>
             {% endfor %}
         </div>
