@@ -2,11 +2,13 @@
 
 // Cookie functions
 function getCookie(name) {
+    // Retrieve a cookie value by name
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? match[2] : null;
 }
 
 function setCookie(name, value, days) {
+    // Set a cookie with a specified expiration period
     const expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
     document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
@@ -30,6 +32,7 @@ if (!storedUsername) {
 
 // Function to handle the visibility of the "Change Username" button
 function updateUsernameButtonVisibility() {
+    // Adjust the visibility of the "Change Username" button based on the current username
     const changeUsernameButton = document.getElementById('change-username-button');
 
     if (storedUsername.toLowerCase() === 'anonymous') {
@@ -46,6 +49,7 @@ updateUsernameButtonVisibility();
 
 // Function to send a message
 function sendMessage() {
+    // Send a user's message to the server and update the chat box
     var messageInput = document.getElementById('message');
     var message = messageInput.value;
 
@@ -87,6 +91,7 @@ document.getElementById('message').addEventListener('keypress', handleKeyPress);
 
 // Function to change the username
 function changeUsername() {
+    // Prompt the user for a new username and update it if valid
     const newUsername = prompt('Enter your new username (limit: 20 characters):', storedUsername);
 
     // Apply input validation for the new username
@@ -101,7 +106,7 @@ function changeUsername() {
 
 // Function to delete chats
 function deleteChats() {
-    // Ask for the pin before deleting chats
+    // Prompt for a pin and delete chats if the pin is valid
     const pin = prompt('Enter pin to delete chats:');
     
     // Perform server-side validation of the pin
@@ -129,6 +134,7 @@ function deleteChats() {
 
 // Function to update the chat box
 function updateChatBox() {
+    // Fetch the latest chat content from the server and update the chat box
     const chatBox = document.getElementById('chat-box');
     
     fetch('/')
