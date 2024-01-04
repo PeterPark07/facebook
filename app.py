@@ -14,10 +14,16 @@ messages_collection = db['messages']
 # Set the timezone to Indian Standard Time (IST)
 indian_timezone = pytz.timezone('Asia/Kolkata')
 
-ind_time = datetime.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S.%f') 
+ind_time = datetime.now(pytz.timezone("Asia/Kolkata")).strftime('%H:%M:%S.%f') 
 print(ind_time)
 print('wkjdhc')
 print(datetime.now())
+print('wkjd22222222222hc')
+print(datetime.utcnow())
+print('wkjd222222333333333333333322222hc')
+dtobj1=datetime.utcnow().replace(tzinfo=pytz.UTC)
+dtobj_india=dtobj1.astimezone(pytz.timezone("Asia/Calcutta")) #astimezone method
+print(dtobj_india)
 
 @app.route('/')
 def index():
