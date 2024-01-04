@@ -14,6 +14,28 @@ function setCookie(name, value, days) {
     document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 }
 
+// Function to notify the server about user entry
+function notifyServerAboutUserEntry(username) {
+    fetch('/user-entered', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'enteredUsername': username,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Server notified about user entry successfully
+            // You can optionally handle this success case
+        } else {
+            console.error('Failed to notify server about user entry.');
+        }
+    });
+}
+
 // Check if the username is stored in a cookie
 let storedUsername = getCookie('username');
 
@@ -28,27 +50,11 @@ if (!storedUsername) {
 
     // Store the username in a cookie
     setCookie('username', storedUsername, 365);  // Expires in 365 days
-} else {
-    // Notify the server about the user's entry (only for users with a previous cookie)
-    fetch('/user-entered', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'enteredUsername': storedUsername,
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Server notified about user entry successfully
-            // You can optionally handle this success case
-        } else {
-            console.error('Failed to notify server about user entry.');
-        }
-    });
+
+
 }
+
+notifyServerAboutUserEntry(storedUsername);
 
 // Function to handle the beforeunload event
 function handleBeforeUnload() {
