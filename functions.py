@@ -19,6 +19,7 @@ def commands(text):
         text = text.replace('/highlight', '')
         effects['highlight'] = True
         effects['golden'] = False
+        effects['animate'] = False
     
     if text.startswith('/delete') and len(text.split()) < 3:
         parts = text.split()
