@@ -65,5 +65,29 @@ def delete_chats():
     else:
         return jsonify({'success': False, 'error': 'Invalid password.'})
 
+
+@app.route('/user-entered', methods=['POST'])
+def user_entered():
+    entered_username = request.form.get('enteredUsername')
+    
+    if entered_username:
+        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
+        display_time = timestamp.strftime('%H:%M')
+
+        # Create a system notification message for the user entry
+        entry_message = {
+            'username': 'System',
+            'message': f'{entered_username} has entered the chat!',
+            'display_time': display_time,
+            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'system': True,
+        }
+
+        messages_collection.insert_one(entry_message)
+        
+        return jsonify({'success': True})
+
+    return jsonify({'success': False, 'error': 'Entered username not provided.'})
+
 if __name__ == '__main__':
     app.run(debug=True)
