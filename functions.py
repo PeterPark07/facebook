@@ -28,7 +28,7 @@ def commands(text):
                 num = 20
         
         # Get the messages to be deleted, sorted by _id in descending order
-        messages_to_delete = messages_collection.find().sort("_id", -1).limit(num)
+        messages_to_delete = messages_collection.find({'persist': {'$exists': False}}).sort("_id", -1).limit(num)
         
         # Delete the messages one by one
         for message in messages_to_delete:
