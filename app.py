@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, jsonify
-from flask_socketio import SocketIO, emit
+#from flask_socketio import SocketIO, emit
 from pymongo import MongoClient
 from datetime import datetime
 import pytz
 import os
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
 # Connect to MongoDB
 mongo_client = MongoClient(os.getenv('mongodb'))
