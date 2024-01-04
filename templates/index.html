@@ -174,7 +174,7 @@
         <div id="chat-box">
             {% for message in messages %}
                 <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
-                    <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message|safe }}
+                    <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
                 </p>
             {% endfor %}
         </div>
