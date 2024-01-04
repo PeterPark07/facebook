@@ -1,5 +1,3 @@
-from database import messages_collection
-
 def commands(text):
     effects = {}
     
@@ -24,7 +22,8 @@ def commands(text):
             return text, effects
         else:
             num = int(parts[1])
-        
+            
+        from database import messages_collection
         messages_collection.delete_many({'persist': {'$exists': False}}, sort=[("_id", -1)], limit=num)
     
     return text, effects
