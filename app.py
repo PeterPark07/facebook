@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import pytz
 import os
+from functions import commands
 
 app = Flask(__name__)
 
@@ -11,19 +12,6 @@ app = Flask(__name__)
 mongo_client = MongoClient(os.getenv('mongodb'))
 db = mongo_client['chat']
 messages_collection = db['messages']
-
-def commands(text):
-    effects = {}
-    
-    if '/persist' in text:
-        text = text.replace('/persist', '')
-        effects['persist'] = True
-        
-    if '/golden' in text:
-        text = text.replace('/golden', '')
-        effects['golden'] = True
-        
-    return text, effects
 
 @app.route('/')
 def index():
