@@ -28,6 +28,26 @@ if (!storedUsername) {
 
     // Store the username in a cookie
     setCookie('username', storedUsername, 365);  // Expires in 365 days
+} else {
+    // Notify the server about the user's entry (only for users with a previous cookie)
+    fetch('/user-entered', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'enteredUsername': storedUsername,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Server notified about user entry successfully
+            // You can optionally handle this success case
+        } else {
+            console.error('Failed to notify server about user entry.');
+        }
+    });
 }
 
 // Function to handle the visibility of the "Change Username" button
