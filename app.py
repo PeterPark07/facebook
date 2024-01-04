@@ -11,20 +11,6 @@ mongo_client = MongoClient(os.getenv('mongodb'))
 db = mongo_client['chat']
 messages_collection = db['messages']
 
-# Set the timezone to Indian Standard Time (IST)
-indian_timezone = pytz.timezone('Asia/Kolkata')
-
-ind_time = datetime.now(pytz.timezone("Asia/Kolkata")).strftime('%H:%M:%S.%f') 
-print(ind_time)
-print('wkjdhc')
-print(datetime.now())
-print('wkjd22222222222hc')
-print(datetime.utcnow())
-print('wkjd222222333333333333333322222hc')
-dtobj1=datetime.utcnow().replace(tzinfo=pytz.UTC)
-dtobj_india=dtobj1.astimezone(pytz.timezone("Asia/Calcutta")) #astimezone method
-print(dtobj_india)
-
 @app.route('/')
 def index():
     # Retrieve all messages from the database
@@ -47,11 +33,13 @@ def send():
         
         # Store the message in the database
         # Localize the timestamp to Indian timezone
-        timestamp = datetime.now(indian_timezone)
+        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
+        display_time = timestamp.strftime('%H:%M')
         
         new_message = {
             'username': username,
             'message': user_message,
+            'display_time': display_time,
             'timestamp': timestamp,
             'persist': should_persist
         }
