@@ -148,5 +148,11 @@ function updateChatBox() {
         });
 }
 
+function toggleInfoMenu() {
+    var infoMenu = document.getElementById('info-menu');
+    infoMenu.style.display = (infoMenu.style.display === 'none' || infoMenu.style.display === '') ? 'block' : 'none';
+}
+
+
 // Optionally, set up periodic updates (e.g., every 3 seconds)
 setInterval(updateChatBox, 3000);
