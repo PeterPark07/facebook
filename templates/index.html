@@ -106,15 +106,22 @@
                 transform: translate(0, 0);
             }
             40% {
-                transform: translate(-20px, -10px);
+                transform: translate(0, -20px);
             }
             60% {
-                transform: translate(20px, -10px);
+                transform: translate(0, 20px);
+            }
+            70% {
+                transform: translate(-20px, 20px);
+            }
+            90% {
+                transform: translate(20px, -20px);
             }
         }
+
         
         #chat-box p.animate {
-            animation: bounce 2s infinite; /* Add your animation properties here */
+            animation: bounce 2s 7; /* Add your animation properties here */
         }
     </style>
 </head>
