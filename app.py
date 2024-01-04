@@ -40,7 +40,7 @@ def send():
             'username': username,
             'message': user_message,
             'display_time': display_time,
-            'timestamp': timestamp,
+            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'persist': should_persist
         }
         
