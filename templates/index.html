@@ -78,7 +78,7 @@
         <div id="chat-box">
             {% for message in messages %}
                 <p>
-                    <strong>{{ message.timestamp.strftime('%H:%M') }} - {{ message.username }}:</strong> {{ message.message }}
+                    <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
                 </p>
             {% endfor %}
         </div>
