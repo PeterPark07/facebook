@@ -36,6 +36,7 @@ def send():
     # Get user input
     username = request.form.get('username')
     user_message = request.form.get('message')
+    effects = {}
     
     if username and user_message:
         if '/' in user_message:
