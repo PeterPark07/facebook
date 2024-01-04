@@ -18,6 +18,7 @@ def commands(text):
     if '/highlight' in text:
         text = text.replace('/highlight', '')
         effects['highlight'] = True
+        effects['golden'] = False
     
     if text.startswith('/delete') and len(text.split()) < 3:
         parts = text.split()
