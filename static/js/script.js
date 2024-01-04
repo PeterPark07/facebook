@@ -50,6 +50,23 @@ if (!storedUsername) {
     });
 }
 
+// Function to handle the beforeunload event
+function handleBeforeUnload() {
+    // Notify the server that the user is leaving
+    fetch('/exit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'username': storedUsername,
+        }),
+    });
+}
+
+// Attach the handleBeforeUnload function to the beforeunload event of the window
+window.addEventListener('beforeunload', handleBeforeUnload);
+
 // Function to handle the visibility of the "Change Username" button
 function updateUsernameButtonVisibility() {
     // Adjust the visibility of the "Change Username" button based on the current username
