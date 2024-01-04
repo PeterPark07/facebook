@@ -89,5 +89,30 @@ def user_entered():
 
     return jsonify({'success': False, 'error': 'Entered username not provided.'})
 
+@app.route('/exit', methods=['POST'])
+def handle_exit():
+    # Get user input
+    username = request.form.get('username')
+
+    if username:
+        # Create a system message indicating that the user has left the chat
+        system_message = f'{username} has left the chat.'
+        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
+        display_time = timestamp.strftime('%H:%M')
+
+        new_message = {
+            'username': 'System',
+            'message': system_message,
+            'display_time': display_time,
+            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'system': True
+        }
+
+        messages_collection.insert_one(new_message)
+
+        return jsonify({'success': True})
+
+    return jsonify({'success': False, 'error': 'Username is required.'})
+
 if __name__ == '__main__':
     app.run(debug=True)
