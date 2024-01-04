@@ -12,6 +12,19 @@ mongo_client = MongoClient(os.getenv('mongodb'))
 db = mongo_client['chat']
 messages_collection = db['messages']
 
+def commands(text):
+    effects = {}
+    
+    if '/persist' in text:
+        text = text.replace('/persist', '')
+        effects['persist'] = True
+        
+    if '/golden' in text:
+        text = text.replace('/golden', '')
+        effects['golden'] = True
+        
+    return text, effects
+
 @app.route('/')
 def index():
     # Retrieve all messages from the database
@@ -23,14 +36,10 @@ def send():
     # Get user input
     username = request.form.get('username')
     user_message = request.form.get('message')
-    should_persist = False
     
     if username and user_message:
-        # Check for persistence flag in the message
-        if '/persist' in user_message:
-            should_persist = True
-            # Remove the persistence flag from the message
-            user_message = user_message.replace('/persist', '')
+        if '/' in user_message:
+            user_message, effects = commands(user_message)
         
         # Store the message in the database
         # Localize the timestamp to Indian timezone
@@ -41,9 +50,10 @@ def send():
             'username': username,
             'message': user_message,
             'display_time': display_time,
-            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'persist': should_persist
+            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
         }
+
+        new_message.update(effects)
         
         messages_collection.insert_one(new_message)
         
@@ -61,7 +71,7 @@ def delete_chats():
     # For simplicity, let's assume the password is 'secret'
     if password == '0':
         # Delete messages without persistence flag
-        messages_collection.delete_many({'persist': False})
+        messages_collection.delete_many({'persist': {'$exists': False}})
         return jsonify({'success': True})
         
     elif password == '1234':
