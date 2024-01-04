@@ -78,8 +78,7 @@ def user_entered():
         entry_message = {
             'username': 'System',
             'message': f'{entered_username} has entered the chat!',
-            'display_time': display_time,
-            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'system': True,
         }
 
@@ -103,8 +102,7 @@ def handle_exit():
         new_message = {
             'username': 'System',
             'message': system_message,
-            'display_time': display_time,
-            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'system': True
         }
 
