@@ -14,6 +14,11 @@ messages_collection = db['messages']
 # Set the timezone to Indian Standard Time (IST)
 indian_timezone = pytz.timezone('Asia/Kolkata')
 
+ind_time = datetime.now(timezone("Asia/Kolkata")).strftime('%H:%M:%S.%f') 
+print(ind_time)
+print('wkjdhc')
+print(datetime.now())
+
 @app.route('/')
 def index():
     # Retrieve all messages from the database
