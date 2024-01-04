@@ -77,7 +77,7 @@
         <!-- Chat messages display -->
         <div id="chat-box">
             {% for message in messages %}
-                <p>
+                <p class="{% if message.golden %}golden{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
                 </p>
             {% endfor %}
