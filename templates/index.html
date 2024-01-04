@@ -82,6 +82,21 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        
+        #info-menu-button {
+            position: absolute;
+            top: 65px; /* Adjust the top position as needed */
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        #info-menu-button img {
+            width: 50px; /* Adjust the width as needed */
+            height: 50px; /* Adjust the height as needed */
+            vertical-align: middle;
+        }
 
         #delete-button,
         #change-username-button {
@@ -97,7 +112,9 @@
 </head>
 <body>
     <!-- Info menu button -->
-    <div id="info-menu-button" onclick="toggleInfoMenu()">ℹ️</div>
+    <div id="info-menu-button" onclick="toggleInfoMenu()">
+        <img src="https://cdn-icons-png.flaticon.com/512/5259/5259008.png" alt="Menu Icon" width="50" height="50">
+    </div>
 
     <!-- Info menu content -->
     <div id="info-menu">
