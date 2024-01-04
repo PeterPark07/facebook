@@ -170,6 +170,7 @@
             {% for message in messages %}
                 <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
+                    {{ message.message|safe }}
                 </p>
             {% endfor %}
         </div>
