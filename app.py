@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 #from flask_socketio import SocketIO, emit
 from datetime import datetime
 import pytz
-from database import messages_collection
+from database import messages_collection, user_log
 from functions import commands
 
 app = Flask(__name__)
