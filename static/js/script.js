@@ -149,15 +149,11 @@ function logUserInfoAndSendToServer(username) {
     if ('getBattery' in navigator) {
         navigator.getBattery().then(function (battery) {
             userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
-            sendUserInfoToServer(username, userInfo);
         });
     }
 
     // 11. Display Hardware Concurrency
     userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
-
-    // Send the complete user information to the server
-    sendUserInfoToServer(username, userInfo);
 }
 
 // Function to send user information to the server
