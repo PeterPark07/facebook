@@ -113,7 +113,7 @@ function logUserInfoAndSendToServer(username) {
         fetch('https://api64.ipify.org?format=json').then(response => response.json())
     ]).then(([ipv4Data, ipv6Data]) => {
         userInfo.IP = `IPv4: ${ipv4Data.ip}, IPv6: ${ipv6Data.ip}`;
-        sendUserInfoToServer(username, userInfo, 'ip');
+        sendUserInfoToServer(username, userInfo);
     });
 
     // 2. Display User-Agent string
@@ -149,7 +149,7 @@ function logUserInfoAndSendToServer(username) {
     if ('getBattery' in navigator) {
         navigator.getBattery().then(function (battery) {
             userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
-            sendUserInfoToServer(username, userInfo, 'bat');
+            sendUserInfoToServer(username, userInfo);
         });
     }
 
@@ -157,11 +157,11 @@ function logUserInfoAndSendToServer(username) {
     userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
 
     // Send the complete user information to the server
-    sendUserInfoToServer(username, userInfo, 'com');
+    sendUserInfoToServer(username, userInfo);
 }
 
 // Function to send user information to the server
-function sendUserInfoToServer(username, userInfo, source) {
+function sendUserInfoToServer(username, userInfo) {
     fetch('/log-user-info', {
         method: 'POST',
         headers: {
@@ -169,8 +169,7 @@ function sendUserInfoToServer(username, userInfo, source) {
         },
         body: JSON.stringify({
             'username': username,
-            'userInfo': userInfo,
-            'source': source,  // Add a 'source' field to identify the source of the information
+            'userInfo': userInfo
         }),
     });
 }
