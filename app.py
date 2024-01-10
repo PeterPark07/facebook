@@ -59,8 +59,15 @@ def log_user_info():
             'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M")
         })
 
-        # Log the entire user information in a single document in the 'user_logs' collection
-        user_log.insert_one(user_info)
+        # Check if a record with the same username and timestamp already exists
+        existing_record = user_log.find_one({'Username': username, 'Timestamp': user_info['Timestamp']})
+
+        if existing_record:
+            # Update the existing record instead of inserting a new one
+            user_log.update_one({'_id': existing_record['_id']}, {'$set': user_info})
+        else:
+            # Insert a new record
+            user_log.insert_one(user_info)
 
         return jsonify({'success': True})
     else:
