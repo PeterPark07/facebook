@@ -52,6 +52,7 @@ def log_user_info():
     if 'username' in data and 'userInfo' in data:
         username = data['username']
         user_info = data['userInfo']
+        user_info['source'] = data['source']
 
         # Add additional information to the user_info dictionary
         user_info.update({
