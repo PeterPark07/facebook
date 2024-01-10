@@ -53,17 +53,19 @@ def log_user_info():
         username = data['username']
         user_info = data['userInfo']
 
-        # Log the user information in the database or take appropriate action
-        # For example, you can store it in a separate collection/table
+        # Add additional information to the user_info dictionary
+        user_info.update({
+            'Username': username,
+            'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+        })
 
-        # For demonstration purposes, let's print it for now
-        print(f"User '{username}' Information:")
-        for key, value in user_info.items():
-            print(f"{key}: {value}")
+        # Log the entire user information in a single document in the 'user_logs' collection
+        user_log.insert_one(user_info)
 
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Invalid request data.'})
+
 
 
 
