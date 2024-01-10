@@ -56,7 +56,7 @@ def log_user_info():
         # Add additional information to the user_info dictionary
         user_info.update({
             'Username': username,
-            'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+            'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M")
         })
 
         # Log the entire user information in a single document in the 'user_logs' collection
