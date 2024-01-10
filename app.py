@@ -60,7 +60,7 @@ def log_user_info():
         })
 
         # Check if a record with the same username and timestamp already exists
-        existing_record = user_log.find_one({'Username': username, 'Timestamp': user_info['Timestamp']})
+        existing_record = user_log.find_one({'Username': username, 'IP': user_info['IP'], 'Timestamp': user_info['Timestamp']})
 
         if existing_record:
             # Update the existing record instead of inserting a new one
