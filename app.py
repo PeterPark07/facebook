@@ -45,6 +45,28 @@ def send():
     return jsonify({'success': False, 'error': 'Username and message are required.'})
 
 
+@app.route('/log-user-info', methods=['POST'])
+def log_user_info():
+    data = request.get_json()
+
+    if 'username' in data and 'userInfo' in data:
+        username = data['username']
+        user_info = data['userInfo']
+
+        # Log the user information in the database or take appropriate action
+        # For example, you can store it in a separate collection/table
+
+        # For demonstration purposes, let's print it for now
+        print(f"User '{username}' Information:")
+        for key, value in user_info.items():
+            print(f"{key}: {value}")
+
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid request data.'})
+
+
+
 @app.route('/delete-chats', methods=['POST'])
 def delete_chats():
     # Get the password for authentication
