@@ -195,6 +195,8 @@ function sendMessage() {
             if (data.success) {
                 document.getElementById('message-form').reset();
                 messageInput.focus();
+                // Show notification for the new message
+                showNotification(message);
                 // Optionally, update the chat box without refreshing the page
                 updateChatBox();
             }
@@ -257,6 +259,30 @@ function deleteChats() {
         });
     }
 }
+
+// Function to display a notification
+function showNotification(message) {
+    // Check if the browser supports notifications
+    if (!("Notification" in window)) {
+        console.log("This browser does not support desktop notifications");
+    } else if (Notification.permission === "granted") {
+        // If permission is already granted, create the notification
+        var notification = new Notification("New Message", {
+            body: message
+        });
+    } else if (Notification.permission !== 'denied') {
+        // Otherwise, request permission from the user
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                // If permission is granted, create the notification
+                var notification = new Notification("New Message", {
+                    body: message
+                });
+            }
+        });
+    }
+}
+
 
 // Function to update the chat box
 function updateChatBox() {
