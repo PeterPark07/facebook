@@ -1,193 +1,325 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Chat Room</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+// script.js
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fce1cc;
-            color: #333;
+// Cookie functions
+function getCookie(name) {
+    // Retrieve a cookie value by name
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+}
+
+function setCookie(name, value, days) {
+    // Set a cookie with a specified expiration period
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+// Function to notify the server about user entry
+function notifyServerAboutUserEntry(username) {
+    fetch('/user-entered', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'enteredUsername': username,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Server notified about user entry successfully
+            // You can optionally handle this success case
+        } else {
+            console.error('Failed to notify server about user entry.');
+        }
+    });
+}
+
+// Check if the username is stored in a cookie
+let storedUsername = getCookie('username');
+
+// If username is not found in the cookie or user rejects the prompt, set to "Anonymous"
+if (!storedUsername) {
+    storedUsername = prompt('Please enter your username (limit: 20 characters):', 'Anonymous');
+
+    // Apply input validation for the username
+    if (storedUsername === null || storedUsername.trim() === '' || storedUsername.length > 20) {
+        storedUsername = 'Anonymous';
+    }
+
+    // Store the username in a cookie
+    setCookie('username', storedUsername, 365);  // Expires in 365 days
+
+
+}
+
+notifyServerAboutUserEntry(storedUsername);
+
+// Function to handle the beforeunload event
+function handleBeforeUnload() {
+    // Notify the server that the user is leaving
+    fetch('/exit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'username': storedUsername,
+        }),
+    });
+}
+
+// Attach the handleBeforeUnload function to the beforeunload event of the window
+window.addEventListener('beforeunload', handleBeforeUnload);
+
+// Function to handle the visibility of the "Change Username" button
+function updateUsernameButtonVisibility() {
+    // Adjust the visibility of the "Change Username" button based on the current username
+    const changeUsernameButton = document.getElementById('change-username-button');
+
+    if (storedUsername.toLowerCase() === 'anonymous') {
+        // Show the button if the username is 'Anonymous'
+        changeUsernameButton.style.display = 'inline-block';
+    } else {
+        // Hide the button if the username is not 'Anonymous'
+        changeUsernameButton.style.display = 'none';
+    }
+}
+
+// Initial visibility check
+updateUsernameButtonVisibility();
+
+// Function to log various user information and send it to the server
+function logUserInfoAndSendToServer(username) {
+    // Build a JSON object with user information
+    const userInfo = {
+        'IP': '',
+        'UserAgent': '',
+        'ScreenInfo': '',
+        'LanguageTimezone': '',
+        'DeviceType': '',
+        'Referrer': '',
+        'ConnectionType': '',
+        'TouchScreen': '',
+        'DeviceMemory': '',
+        'Battery': '',
+        'HardwareConcurrency': '',
+        'NotificationStatus': '' 
+    };
+
+    // 1. Fetch IPv4 and IPv6 addresses
+    Promise.all([
+        fetch('https://api.ipify.org?format=json').then(response => response.json()),
+        fetch('https://api64.ipify.org?format=json').then(response => response.json())
+    ]).then(([ipv4Data, ipv6Data]) => {
+        userInfo.IP = `IPv4: ${ipv4Data.ip}, IPv6: ${ipv6Data.ip}`;
+        // 2. Display User-Agent string
+        userInfo.UserAgent = navigator.userAgent;
+
+        // 3. Display Screen Resolution and Device Orientation
+        const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const deviceOrientation = window.orientation;
+        userInfo.ScreenInfo = `Resolution: ${screenWidth}x${screenHeight}, Orientation: ${deviceOrientation}`;
+
+        // 4. Display User Language and Timezone
+        const userLanguage = navigator.language || navigator.userLanguage;
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        userInfo.LanguageTimezone = `Language: ${userLanguage}, Timezone: ${userTimezone}`;
+
+        // 5. Display Device Type
+        userInfo.DeviceType = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+
+        // 6. Display Referrer Information
+        userInfo.Referrer = document.referrer || 'Direct visit';
+
+        // 7. Display Network Connection Type
+        userInfo.ConnectionType = navigator.connection ? navigator.connection.type : 'Not available';
+
+        // 8. Display Touch Screen Support
+        userInfo.TouchScreen = 'maxTouchPoints' in navigator ? navigator.maxTouchPoints : 'Not available';
+
+        // 9. Display Device Memory
+        userInfo.DeviceMemory = navigator.deviceMemory || 'Not available';
+
+        // 10. Display Battery Information
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function (battery) {
+                userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
+            });
         }
 
-        #chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
+        // 11. Display Hardware Concurrency
+        userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
 
-        #chat-box {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 10px;
-            box-sizing: content-box;
-            max-height: calc(100vh - 50px);
-        }
-
-        #chat-box p.golden {
-            color: gold;
-        }
-
-        #message-form {
-            display: flex;
-            padding: 10px;
-            box-sizing: content-box;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        #message-form input,
-        #message-form button {
-            margin-right: 10px;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        #message-form input {
-            flex-grow: 1;
-        }
-
-        #send-button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        #info-menu {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            display: none;
-            z-index: 1000;
-        }
-
-        #info-menu-button {
-            position: absolute;
-            top: 45px;
-            right: 10px;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        #delete-button,
-        #change-username-button {
-            position: absolute;
-            right: 10px;
-            padding: 8px 16px;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-
-        #delete-button { top: 5px; }
-        #change-username-button { top: 80px; }
-
-        @keyframes bounce {
-            0%, 50%, 100% {
-                transform: translate(0, 0);
+        // 12. Check Notification Permission Status
+        if ("Notification" in window) {
+            if (Notification.permission === "granted") {
+                userInfo.NotificationStatus = "granted";
+            } else if (Notification.permission === "denied") {
+                userInfo.NotificationStatus = "denied";
+            } else {
+                userInfo.NotificationStatus = "default";
             }
-            15% {
-                transform: translate(-5px, -5px);
-            }
-            35% {
-                transform: translate(5px, -5px);
-            }
-            65% {
-                transform: translate(-5px, 5px);
-            }
-            85% {
-                transform: translate(5px, 5px);
-            }
+        } else {
+            userInfo.NotificationStatus = "unsupported";
         }
 
-        @keyframes colorChange {
-            0% {
-                color: red;
+        // Send user information to the server
+        sendUserInfoToServer(username, userInfo);
+    });
+}
+
+// Function to send user information to the server
+function sendUserInfoToServer(username, userInfo) {
+    fetch('/log-user-info', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'username': username,
+            'userInfo': userInfo
+        }),
+    });
+}
+// Call the function to log user information and send it to the server
+logUserInfoAndSendToServer(storedUsername);
+
+
+// Function to send a message
+function sendMessage() {
+    // Send a user's message to the server and update the chat box
+    var messageInput = document.getElementById('message');
+    var message = messageInput.value;
+
+    if (message) {
+        fetch('/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'username': storedUsername,
+                'message': message,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('message-form').reset();
+                messageInput.focus();
+                // Show notification for the new message
+                showNotification(message);
+                // Optionally, update the chat box without refreshing the page
+                updateChatBox();
             }
-            25% {
-                color: orange;
+        });
+    }
+}
+
+// Function to handle the keypress event in the message input field
+function handleKeyPress(event) {
+    // Check if the pressed key is Enter (key code 13)
+    if (event.keyCode === 13) {
+        sendMessage();
+        // Prevent the default form submission behavior
+        event.preventDefault();
+    }
+}
+
+// Attach the handleKeyPress function to the keypress event of the message input field
+document.getElementById('message').addEventListener('keypress', handleKeyPress);
+
+// Function to change the username
+function changeUsername() {
+    // Prompt the user for a new username and update it if valid
+    const newUsername = prompt('Enter your new username (limit: 20 characters):', storedUsername);
+
+    // Apply input validation for the new username
+    if (newUsername !== null && newUsername.trim() !== '' && newUsername.length <= 20) {
+        storedUsername = newUsername;
+        setCookie('username', storedUsername, 365);  // Expires in 365 days
+        updateChatBox();
+    } else {
+        alert('Invalid username. Please try again.');
+    }
+}
+
+// Function to delete chats
+function deleteChats() {
+    // Prompt for a pin and delete chats if the pin is valid
+    const pin = prompt('Enter pin to delete chats:');
+    
+    // Perform server-side validation of the pin
+    if (pin) {
+        fetch('/delete-chats', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'pin': pin,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Chats deleted successfully
+                updateChatBox();
+            } else {
+                alert('Invalid pin. Chats not deleted.');
             }
-            50% {
-                color: yellow;
+        });
+    }
+}
+
+// Function to display a notification
+function showNotification(message) {
+    // Check if the browser supports notifications
+    if (!("Notification" in window)) {
+        console.log("This browser does not support desktop notifications");
+    } else if (Notification.permission === "granted") {
+        // If permission is already granted, create the notification
+        var notification = new Notification("New Message", {
+            body: message
+        });
+    } else if (Notification.permission !== 'denied') {
+        // Otherwise, request permission from the user
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                // If permission is granted, create the notification
+                var notification = new Notification("New Message", {
+                    body: message
+                });
             }
-            75% {
-                color: green;
-            }
-            100% {
-                color: red;
-            }
-        }
+        });
+    }
+}
 
-        #chat-box p.highlight {
-            animation: colorChange 2s infinite; /* Add your animation properties here */
-        }
-        #chat-box p.animate {
-            animation: bounce 2s 7; /* Add your animation properties here */
-        }
 
-        #chat-box p.system {
-            color: #ad0202; /* Set the color for system notification messages */
-            font-style: italic;
-        }
-    </style>
-</head>
-<body>
-    <!-- Info menu button -->
-    <div id="info-menu-button" onclick="toggleInfoMenu()">
-        <i class="fas fa-info-circle" style="font-size: 30px;"></i>
-    </div>
+// Function to update the chat box
+function updateChatBox() {
+    // Fetch the latest chat content from the server and update the chat box
+    const chatBox = document.getElementById('chat-box');
+    
+    fetch('/')
+        .then(response => response.text())
+        .then(html => {
+            // Update the chat box content
+            chatBox.innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('chat-box').innerHTML;
 
-    <!-- Info menu content -->
-    <div id="info-menu">
-        <p>Commands:</p>
-        <ul>
-            <li>/persist - Makes messages permanent.</li>
-            <li>/golden - Displays messages in golden color.</li>
-            <li>/animate - Adds animation to the messages.</li>
-            <li>/highlight - Flashes the message in various colours.</li>
-            <li>/delete [number] - Deletes recent messages. (default: 5, max: 20)</li>
-        </ul>
-    </div>
+            // Scroll to the bottom of the chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+}
 
-    <!-- Main chat container -->
-    <div id="chat-container">
-        <!-- Chat messages display -->
-        <div id="chat-box">
-            {% for message in messages %}
-                <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
-                    <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
-                </p>
-            {% endfor %}
-        </div>
+function toggleInfoMenu() {
+    var infoMenu = document.getElementById('info-menu');
+    infoMenu.style.display = (infoMenu.style.display === 'none' || infoMenu.style.display === '') ? 'block' : 'none';
+}
 
-        <!-- Message input form -->
-        <form id="message-form">
-            <input type="text" id="message" name="message" placeholder="Message" maxlength="400" required>
-            <button type="button" id="send-button" onclick="sendMessage()">Send</button>
-        </form>
 
-        <!-- Delete and Change Username buttons -->
-        <button id="delete-button" onclick="deleteChats()">Clear Chats</button>
-        <button id="change-username-button" onclick="changeUsername()">Change Username</button>
-    </div>
-
-    <!-- Reference the external JavaScript file -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
-</body>
-</html>
+// Optionally, set up periodic updates (e.g., every 3 seconds)
+setInterval(updateChatBox, 3000);
