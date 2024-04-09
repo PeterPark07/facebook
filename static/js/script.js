@@ -66,6 +66,31 @@ function handleBeforeUnload() {
         },
         body: new URLSearchParams({
             'username': storedUsername,
+        }),
+    });
+}
+
+// Attach the handleBeforeUnload function to the beforeunload event of the window
+window.addEventListener('beforeunload', handleBeforeUnload);
+
+// Function to handle the visibility of the "Change Username" button
+function updateUsernameButtonVisibility() {
+    // Adjust the visibility of the "Change Username" button based on the current username
+    const changeUsernameButton = document.getElementById('change-username-button');
+
+    if (storedUsername.toLowerCase() === 'anonymous') {
+        // Show the button if the username is 'Anonymous'
+        changeUsernameButton.style.display = 'inline-block';
+    } else {
+        // Hide the button if the username is not 'Anonymous'
+        changeUsernameButton.style.display = 'none';
+    }
+}
+
+// Initial visibility check
+updateUsernameButtonVisibility();
+
+// Function to log various user information and send it to the server
 function logUserInfoAndSendToServer(username) {
     // Build a JSON object with user information
     const userInfo = {
@@ -144,33 +169,6 @@ function logUserInfoAndSendToServer(username) {
         // Send user information to the server
         sendUserInfoToServer(username, userInfo);
     });
-}
-
-
-
-// Attach the handleBeforeUnload function to the beforeunload event of the window
-window.addEventListener('beforeunload', handleBeforeUnload);
-
-// Function to handle the visibility of the "Change Username" button
-function updateUsernameButtonVisibility() {
-    // Adjust the visibility of the "Change Username" button based on the current username
-    const changeUsernameButton = document.getElementById('change-username-button');
-
-    if (storedUsername.toLowerCase() === 'anonymous') {
-        // Show the button if the username is 'Anonymous'
-        changeUsernameButton.style.display = 'inline-block';
-    } else {
-        // Hide the button if the username is not 'Anonymous'
-        changeUsernameButton.style.display = 'none';
-    }
-}
-
-// Initial visibility check
-updateUsernameButtonVisibility();
-
-// Function to log various user information and send it to the server
-
-
 }
 
 // Function to send user information to the server
