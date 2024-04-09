@@ -104,8 +104,7 @@ function logUserInfoAndSendToServer(username) {
         'TouchScreen': '',
         'DeviceMemory': '',
         'Battery': '',
-        'HardwareConcurrency': '',
-        'NotificationStatus': '' 
+        'HardwareConcurrency': ''
     };
 
     // 1. Fetch IPv4 and IPv6 addresses
@@ -114,61 +113,47 @@ function logUserInfoAndSendToServer(username) {
         fetch('https://api64.ipify.org?format=json').then(response => response.json())
     ]).then(([ipv4Data, ipv6Data]) => {
         userInfo.IP = `IPv4: ${ipv4Data.ip}, IPv6: ${ipv6Data.ip}`;
-        // 2. Display User-Agent string
-        userInfo.UserAgent = navigator.userAgent;
-
-        // 3. Display Screen Resolution and Device Orientation
-        const screenWidth = window.screen.width;
-        const screenHeight = window.screen.height;
-        const deviceOrientation = window.orientation;
-        userInfo.ScreenInfo = `Resolution: ${screenWidth}x${screenHeight}, Orientation: ${deviceOrientation}`;
-
-        // 4. Display User Language and Timezone
-        const userLanguage = navigator.language || navigator.userLanguage;
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        userInfo.LanguageTimezone = `Language: ${userLanguage}, Timezone: ${userTimezone}`;
-
-        // 5. Display Device Type
-        userInfo.DeviceType = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
-
-        // 6. Display Referrer Information
-        userInfo.Referrer = document.referrer || 'Direct visit';
-
-        // 7. Display Network Connection Type
-        userInfo.ConnectionType = navigator.connection ? navigator.connection.type : 'Not available';
-
-        // 8. Display Touch Screen Support
-        userInfo.TouchScreen = 'maxTouchPoints' in navigator ? navigator.maxTouchPoints : 'Not available';
-
-        // 9. Display Device Memory
-        userInfo.DeviceMemory = navigator.deviceMemory || 'Not available';
-
-        // 10. Display Battery Information
-        if ('getBattery' in navigator) {
-            navigator.getBattery().then(function (battery) {
-                userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
-            });
-        }
-
-        // 11. Display Hardware Concurrency
-        userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
-
-        // 12. Check Notification Permission Status
-        if ("Notification" in window) {
-            if (Notification.permission === "granted") {
-                userInfo.NotificationStatus = "granted";
-            } else if (Notification.permission === "denied") {
-                userInfo.NotificationStatus = "denied";
-            } else {
-                userInfo.NotificationStatus = "default";
-            }
-        } else {
-            userInfo.NotificationStatus = "unsupported";
-        }
-
-        // Send user information to the server
         sendUserInfoToServer(username, userInfo);
     });
+
+    // 2. Display User-Agent string
+    userInfo.UserAgent = navigator.userAgent;
+
+    // 3. Display Screen Resolution and Device Orientation
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const deviceOrientation = window.orientation;
+    userInfo.ScreenInfo = `Resolution: ${screenWidth}x${screenHeight}, Orientation: ${deviceOrientation}`;
+
+    // 4. Display User Language and Timezone
+    const userLanguage = navigator.language || navigator.userLanguage;
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    userInfo.LanguageTimezone = `Language: ${userLanguage}, Timezone: ${userTimezone}`;
+
+    // 5. Display Device Type
+    userInfo.DeviceType = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+
+    // 6. Display Referrer Information
+    userInfo.Referrer = document.referrer || 'Direct visit';
+
+    // 7. Display Network Connection Type
+    userInfo.ConnectionType = navigator.connection ? navigator.connection.type : 'Not available';
+
+    // 8. Display Touch Screen Support
+    userInfo.TouchScreen = 'maxTouchPoints' in navigator ? navigator.maxTouchPoints : 'Not available';
+
+    // 9. Display Device Memory
+    userInfo.DeviceMemory = navigator.deviceMemory || 'Not available';
+
+    // 10. Display Battery Information
+    if ('getBattery' in navigator) {
+        navigator.getBattery().then(function (battery) {
+            userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
+        });
+    }
+
+    // 11. Display Hardware Concurrency
+    userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
 }
 
 // Function to send user information to the server
@@ -210,8 +195,6 @@ function sendMessage() {
             if (data.success) {
                 document.getElementById('message-form').reset();
                 messageInput.focus();
-                // Show notification for the new message
-                showNotification(message);
                 // Optionally, update the chat box without refreshing the page
                 updateChatBox();
             }
@@ -274,30 +257,6 @@ function deleteChats() {
         });
     }
 }
-
-// Function to display a notification
-function showNotification(message) {
-    // Check if the browser supports notifications
-    if (!("Notification" in window)) {
-        console.log("This browser does not support desktop notifications");
-    } else if (Notification.permission === "granted") {
-        // If permission is already granted, create the notification
-        var notification = new Notification("New Message", {
-            body: message
-        });
-    } else if (Notification.permission !== 'denied') {
-        // Otherwise, request permission from the user
-        Notification.requestPermission().then(function (permission) {
-            if (permission === "granted") {
-                // If permission is granted, create the notification
-                var notification = new Notification("New Message", {
-                    body: message
-                });
-            }
-        });
-    }
-}
-
 
 // Function to update the chat box
 function updateChatBox() {
