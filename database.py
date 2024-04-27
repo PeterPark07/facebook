@@ -4,6 +4,7 @@ import os
 # Connect to MongoDB
 mongo_client = MongoClient(os.getenv('mongodb'))
 db = mongo_client['chat']
-messages_collection = db['messages']
+collection = os.getenv('collection')
+messages_collection = db[collection]
 
 user_log = db['log']
