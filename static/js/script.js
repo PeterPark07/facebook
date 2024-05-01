@@ -258,21 +258,34 @@ function deleteChats() {
     }
 }
 
+let userScrolledUp = false;
+
 // Function to update the chat box
 function updateChatBox() {
     // Fetch the latest chat content from the server and update the chat box
     const chatBox = document.getElementById('chat-box');
-    
+
+    // Check if the user has scrolled up
+    if (chatBox.scrollTop + chatBox.clientHeight < chatBox.scrollHeight) {
+        userScrolledUp = true;
+    } else {
+        userScrolledUp = false;
+    }
+
     fetch('/')
         .then(response => response.text())
         .then(html => {
             // Update the chat box content
             chatBox.innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('chat-box').innerHTML;
 
-            // Scroll to the bottom of the chat box
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Scroll to the bottom of the chat box if the user hasn't scrolled up
+            if (!userScrolledUp) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         });
 }
+
+
 
 function toggleInfoMenu() {
     var infoMenu = document.getElementById('info-menu');
