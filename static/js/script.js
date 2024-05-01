@@ -266,7 +266,7 @@ function updateChatBox() {
     const chatBox = document.getElementById('chat-box');
 
     // Check if the user has scrolled up
-    if (chatBox.scrollTop + chatBox.clientHeight + 50 < chatBox.scrollHeight) {
+    if (chatBox.scrollTop + chatBox.clientHeight + 100 < chatBox.scrollHeight) {
         userScrolledUp = true;
     } else {
         userScrolledUp = false;
