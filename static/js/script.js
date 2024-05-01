@@ -286,6 +286,11 @@ function updateChatBox() {
 }
 
 
+// Function to scroll to the bottom of the chat box
+function scrollToBottom() {
+    const chatBox = document.getElementById('chat-box');
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
 function toggleInfoMenu() {
     var infoMenu = document.getElementById('info-menu');
