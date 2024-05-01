@@ -96,10 +96,7 @@
         }
 
         #delete-button { top: 5px; }
-        #scroll-bottom-btn { 
-            top: 80px; 
-            z-index: 1002; /* Adjust z-index to be higher */
-        }
+        #scroll-bottom-btn { top: 80px; }
         #change-username-button { top: 120px; }
 
         @keyframes bounce {
@@ -168,9 +165,7 @@
             <li>/delete [number] - Deletes recent messages. (default: 5, max: 20)</li>
         </ul>
     </div>
-
-    <!-- Scroll to bottom button -->
-    <button id="scroll-bottom-btn" onclick="scrollToBottom()">Scroll to Bottom</button>
+    
 
     <!-- Main chat container -->
     <div id="chat-container">
@@ -189,8 +184,9 @@
             <button type="button" id="send-button" onclick="sendMessage()">Send</button>
         </form>
 
-        <!-- Delete and Change Username buttons -->
+        <!-- Delete, Scroll to bottom and Change Username buttons -->
         <button id="delete-button" onclick="deleteChats()">Clear Chats</button>
+        <button id="scroll-bottom-btn" onclick="scrollToBottom()">Scroll to Bottom</button>
         <button id="change-username-button" onclick="changeUsername()">Change Username</button>
     </div>
 
