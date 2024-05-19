@@ -193,6 +193,7 @@
                     {% if last_date != message_date %}
                         <div class="date-divider">{{ message_date }}</div>
                         {% set last_date = message_date %}
+                        <div class="debug-info">Last Date Updated: {{ last_date }}</div> {# New debug statement #}
                     {% endif %}
                 {% endif %}
                 <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
