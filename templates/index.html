@@ -185,7 +185,7 @@
             {% set last_date = None %}
             {% for message in messages %}
                 {% if 'timestamp' in message %}
-                    {% set message_date = message.timestamp[:10] %}
+                    {% set message_date = message.timestamp[0:10] %}
                     {% if last_date != message_date %}
                         <div class="date-divider">{{ message_date }}</div>
                         {% set last_date = message_date %}
