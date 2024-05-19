@@ -184,10 +184,12 @@
         <div id="chat-box">
             {% set last_date = None %}
             {% for message in messages %}
-                {% set message_date = message.timestamp[:10] %}
-                {% if last_date != message_date %}
-                    <div class="date-divider">{{ message_date }}</div>
-                    {% set last_date = message_date %}
+                {% if 'timestamp' in message %}
+                    {% set message_date = message.timestamp[:10] %}
+                    {% if last_date != message_date %}
+                        <div class="date-divider">{{ message_date }}</div>
+                        {% set last_date = message_date %}
+                    {% endif %}
                 {% endif %}
                 <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
