@@ -184,8 +184,8 @@
         <div id="chat-box">
             {% set last_date = None %}
             {% for message in messages %}
-                {% if 'timestamp' in message %}
-                    {% set message_date = message.timestamp[0:10] %}
+                {% if 'system' in message %}
+                    {% set message_date = message.display_time[0:10] %}
                     {% if last_date != message_date %}
                         <div class="date-divider">{{ message_date }}</div>
                         {% set last_date = message_date %}
