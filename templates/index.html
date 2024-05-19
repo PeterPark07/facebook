@@ -178,25 +178,29 @@
     </div>
     
 
-        <div id="chat-container">
-            <!-- Chat messages display -->
-            <div id="chat-box">
-                {% set last_date = None %}
-                {% for message in messages %}
-                    {% if 'system' in message %}
-                        {% set message_date = message.display_time[0:10] %}
-                        <div class="debug-info">Last Date: {{ last_date }} | Message Date: {{ message_date }}</div> {# Debugging statement #}
-                        {% if last_date != message_date %}
-                            <div class="date-divider">{{ message_date }}</div>
-                            {% set last_date = message_date %}
-                        {% endif %}
+    <div id="chat-container">
+        <!-- Chat messages display -->
+        <div id="chat-box">
+            {% set last_date = None %}
+            {% for message in messages %}
+                {% if 'system' in message %}
+                    {% set message_date = message.display_time[0:10] %}
+                    <div class="debug-info">
+                        Last Date: {{ last_date }} | Message Date: {{ message_date }}
+                        Display Time: {{ message.display_time }}
+                    </div> {# Debugging statement #}
+                    {% if last_date != message_date %}
+                        <div class="date-divider">{{ message_date }}</div>
+                        {% set last_date = message_date %}
                     {% endif %}
-                    <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
-                        <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
-                    </p>
-                {% endfor %}
-            </div>
+                {% endif %}
+                <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
+                    <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
+                </p>
+            {% endfor %}
         </div>
+    </div>
+
 
 
         <!-- Message input form -->
