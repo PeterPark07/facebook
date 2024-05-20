@@ -15,7 +15,7 @@ def index():
     for message in messages:
         system = message.get('system')
         if system:
-            message_date = display_time[:10]  # Extract date part
+            message_date = message.get('display_time')[:10]  # Extract date part
             if message_date != last_date:
                 # Add a key to indicate a new date divider should be shown before this message
                 message['new_date'] = message_date
