@@ -176,25 +176,13 @@
             <li>/delete [number] - Deletes recent messages. (default: 5, max: 20)</li>
         </ul>
     </div>
-    
+
 
     <div id="chat-container">
-        <!-- Chat messages display -->
-        {% set last_date = None %} {# Move the last_date variable outside the chat-box div #}
         <div id="chat-box">
             {% for message in messages %}
-                {% if 'system' in message %}
-                    {% set message_date = message.display_time[0:10] %}
-                    <div class="debug-info">
-                        Last Date: {{ last_date }} | Message Date: {{ message_date }}
-                        Display Time: {{ message.display_time }}
-                        Condition: {{ last_date != message_date }}
-                    </div> {# Debugging statement #}
-                    {% if last_date != message_date %}
-                        <div class="date-divider">{{ message_date }}</div>
-                        {% set last_date = message_date %}
-                        <div class="debug-info">Last Date Updated: {{ last_date }}</div> {# New debug statement #}
-                    {% endif %}
+                {% if message.new_date %}
+                    <div class="date-divider">{{ message.new_date }}</div>
                 {% endif %}
                 <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
@@ -202,10 +190,6 @@
             {% endfor %}
         </div>
     </div>
-
-
-
-
 
         <!-- Message input form -->
         <form id="message-form">
