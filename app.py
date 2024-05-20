@@ -16,7 +16,7 @@ def index():
         system = message.get('system')
         if system:
             message_date = message.get('display_time')[:10]  # Extract date part
-            message['display_time'] = message.get('display_time')[8:]
+            message['display_time'] = message.get('display_time')[11:]
 
         else:
             message_date = message.get('timestamp')[:10]
