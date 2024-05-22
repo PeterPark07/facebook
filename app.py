@@ -96,5 +96,41 @@ def handle_user_left(data):
     except Exception as e:
         app.logger.error(f"Error in handle_user_left: {str(e)}")
 
+@app.route('/log-user-info', methods=['POST'])
+def log_user_info():
+    data = request.get_json()
+    if 'username' in data and 'userInfo' in data:
+        username = data['username']
+        user_info = data['userInfo']
+
+        user_info.update({
+            'Username': username,
+            'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M")
+        })
+
+        existing_record = user_log.find_one(user_info)
+        if existing_record:
+            user_log.update_one({'_id': existing_record['_id']}, {'$set': user_info})
+        else:
+            user_log.insert_one(user_info)
+
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid request data.'})
+
+@app.route('/delete-chats', methods=['POST'])
+def delete_chats():
+    password = request.form.get('pin')
+    if password == '0':
+        messages_collection.delete_many({'persist': {'$exists': False}})
+        return jsonify({'success': True})
+    elif password == '1234':
+        messages_collection.delete_many({})
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid password.'})
+
+
+
 if __name__ == '__main__':
     socketio.run(app, debug=True)
