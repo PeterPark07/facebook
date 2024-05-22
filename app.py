@@ -5,6 +5,7 @@ from datetime import datetime
 import pytz
 from database import messages_collection, user_log
 from functions import commands
+from bson import ObjectId
 
 app = Flask(__name__)
 socketio = SocketIO(app, logger=True, engineio_logger=True)
@@ -26,6 +27,10 @@ def index():
             if message_date != last_date:
                 message['new_date'] = message_date
                 last_date = message_date
+
+        # Ensure all ObjectId fields are converted to strings
+        if '_id' in message:
+            message['_id'] = str(message['_id'])
 
     return render_template('index.html', messages=messages)
 
@@ -51,11 +56,14 @@ def handle_send_message(data):
             }
 
             new_message.update(effects)
-            messages_collection.insert_one(new_message)
+            result = messages_collection.insert_one(new_message)
+
+            # Add the inserted_id to the message for sending to the client
+            new_message['_id'] = str(result.inserted_id)
 
             emit('receive_message', new_message, broadcast=True)
     except Exception as e:
-        app.logger.error(f"Error in handle_send_message: {str(e)}")
+        app.logger.error(f"Error in handle_send_message: {str(e)}", exc_info=True)
 
 @socketio.on('user_entered')
 def handle_user_entered(data):
@@ -71,10 +79,12 @@ def handle_user_entered(data):
                 'system': True,
             }
 
-            messages_collection.insert_one(entry_message)
+            result = messages_collection.insert_one(entry_message)
+            entry_message['_id'] = str(result.inserted_id)
+
             emit('receive_message', entry_message, broadcast=True)
     except Exception as e:
-        app.logger.error(f"Error in handle_user_entered: {str(e)}")
+        app.logger.error(f"Error in handle_user_entered: {str(e)}", exc_info=True)
 
 @socketio.on('user_left')
 def handle_user_left(data):
@@ -91,10 +101,12 @@ def handle_user_left(data):
                 'system': True
             }
 
-            messages_collection.insert_one(new_message)
+            result = messages_collection.insert_one(new_message)
+            new_message['_id'] = str(result.inserted_id)
+
             emit('receive_message', new_message, broadcast=True)
     except Exception as e:
-        app.logger.error(f"Error in handle_user_left: {str(e)}")
+        app.logger.error(f"Error in handle_user_left: {str(e)}", exc_info=True)
 
 @app.route('/log-user-info', methods=['POST'])
 def log_user_info():
@@ -108,13 +120,17 @@ def log_user_info():
             'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M")
         })
 
-        existing_record = user_log.find_one(user_info)
-        if existing_record:
-            user_log.update_one({'_id': existing_record['_id']}, {'$set': user_info})
-        else:
-            user_log.insert_one(user_info)
+        try:
+            existing_record = user_log.find_one(user_info)
+            if existing_record:
+                user_log.update_one({'_id': existing_record['_id']}, {'$set': user_info})
+            else:
+                user_log.insert_one(user_info)
 
-        return jsonify({'success': True})
+            return jsonify({'success': True})
+        except Exception as e:
+            app.logger.error(f"Error in log_user_info: {str(e)}", exc_info=True)
+            return jsonify({'success': False, 'error': 'Database error.'})
     else:
         return jsonify({'success': False, 'error': 'Invalid request data.'})
 
@@ -129,8 +145,6 @@ def delete_chats():
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Invalid password.'})
-
-
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
