@@ -200,6 +200,7 @@ function deleteChats() {
 
 let userScrolledUp = false;
 
+
 // Function to update the chat box
 function updateChatBox(newMessage) {
     const chatBox = document.getElementById('chat-box');
@@ -207,8 +208,14 @@ function updateChatBox(newMessage) {
     if (newMessage) {
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
-        messageElement.innerHTML = `<strong>${newMessage.username}</strong>: ${newMessage.message} <span class="timestamp">${newMessage.display_time}</span>`;
+        messageElement.innerHTML = `<strong>${newMessage.display_time} - ${newMessage.username}:</strong> ${newMessage.message}`;
         
+        // Add effects classes if present
+        if (newMessage.golden) messageElement.classList.add('golden');
+        if (newMessage.animate) messageElement.classList.add('animate');
+        if (newMessage.highlight) messageElement.classList.add('highlight');
+        if (newMessage.system) messageElement.classList.add('system');
+
         chatBox.appendChild(messageElement);
     }
 
