@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit
 from datetime import datetime
@@ -6,7 +7,9 @@ from database import messages_collection, user_log
 from functions import commands
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, logger=True, engineio_logger=True)
+
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/')
 def index():
@@ -28,96 +31,70 @@ def index():
 
 @socketio.on('send_message')
 def handle_send_message(data):
-    username = data.get('username')
-    user_message = data.get('message')
-    effects = {}
-    
-    if username and user_message:
-        if '/' in user_message:
-            user_message, effects = commands(user_message)
-        
-        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
-        display_time = timestamp.strftime('%H:%M')
+    try:
+        username = data['username']
+        user_message = data['message']
+        effects = {}
 
-        new_message = {
-            'username': username,
-            'message': user_message,
-            'display_time': display_time,
-            'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        }
-        
-        new_message.update(effects)
-        messages_collection.insert_one(new_message)
-        emit('receive_message', new_message, broadcast=True)
+        if username and user_message:
+            if '/' in user_message:
+                user_message, effects = commands(user_message)
+
+            timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
+            display_time = timestamp.strftime('%H:%M')
+
+            new_message = {
+                'username': username,
+                'message': user_message,
+                'display_time': display_time,
+                'timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+            new_message.update(effects)
+            messages_collection.insert_one(new_message)
+
+            emit('receive_message', new_message, broadcast=True)
+    except Exception as e:
+        app.logger.error(f"Error in handle_send_message: {str(e)}")
 
 @socketio.on('user_entered')
 def handle_user_entered(data):
-    entered_username = data.get('enteredUsername')
-    if entered_username:
-        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
-        display_time = timestamp.strftime('%H:%M')
-        
-        entry_message = {
-            'username': 'System',
-            'message': f'{entered_username} has entered the chat!',
-            'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'system': True,
-        }
+    try:
+        entered_username = data['enteredUsername']
+        if entered_username:
+            timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
 
-        messages_collection.insert_one(entry_message)
-        emit('receive_message', entry_message, broadcast=True)
+            entry_message = {
+                'username': 'System',
+                'message': f'{entered_username} has entered the chat!',
+                'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'system': True,
+            }
+
+            messages_collection.insert_one(entry_message)
+            emit('receive_message', entry_message, broadcast=True)
+    except Exception as e:
+        app.logger.error(f"Error in handle_user_entered: {str(e)}")
 
 @socketio.on('user_left')
 def handle_user_left(data):
-    username = data.get('username')
-    if username:
-        system_message = f'{username} has left the chat.'
-        timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
-        display_time = timestamp.strftime('%H:%M')
-
-        new_message = {
-            'username': 'System',
-            'message': system_message,
-            'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'system': True
-        }
-
-        messages_collection.insert_one(new_message)
-        emit('receive_message', new_message, broadcast=True)
-
-@app.route('/log-user-info', methods=['POST'])
-def log_user_info():
-    data = request.get_json()
-    if 'username' in data and 'userInfo' in data:
+    try:
         username = data['username']
-        user_info = data['userInfo']
+        if username:
+            system_message = f'{username} has left the chat.'
+            timestamp = datetime.now(pytz.timezone("Asia/Kolkata"))
 
-        user_info.update({
-            'Username': username,
-            'Timestamp': datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M")
-        })
+            new_message = {
+                'username': 'System',
+                'message': system_message,
+                'display_time': timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                'system': True
+            }
 
-        existing_record = user_log.find_one(user_info)
-        if existing_record:
-            user_log.update_one({'_id': existing_record['_id']}, {'$set': user_info})
-        else:
-            user_log.insert_one(user_info)
-
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Invalid request data.'})
-
-@app.route('/delete-chats', methods=['POST'])
-def delete_chats():
-    password = request.form.get('pin')
-    if password == '0':
-        messages_collection.delete_many({'persist': {'$exists': False}})
-        return jsonify({'success': True})
-    elif password == '1234':
-        messages_collection.delete_many({})
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Invalid password.'})
+            messages_collection.insert_one(new_message)
+            emit('receive_message', new_message, broadcast=True)
+    except Exception as e:
+        app.logger.error(f"Error in handle_user_left: {str(e)}")
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
