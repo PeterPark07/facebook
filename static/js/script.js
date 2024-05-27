@@ -72,67 +72,7 @@ function updateUsernameButtonVisibility() {
 // Initial visibility check
 updateUsernameButtonVisibility();
 
-// Function to log various user information and send it to the server
-function logUserInfoAndSendToServer(username) {
-    const userInfo = {
-        'IP': '',
-        'UserAgent': '',
-        'ScreenInfo': '',
-        'LanguageTimezone': '',
-        'DeviceType': '',
-        'Referrer': '',
-        'ConnectionType': '',
-        'TouchScreen': '',
-        'DeviceMemory': '',
-        'Battery': '',
-        'HardwareConcurrency': ''
-    };
 
-    Promise.all([
-        fetch('https://api.ipify.org?format=json').then(response => response.json()),
-        fetch('https://api64.ipify.org?format=json').then(response => response.json())
-    ]).then(([ipv4Data, ipv6Data]) => {
-        userInfo.IP = `IPv4: ${ipv4Data.ip}, IPv6: ${ipv6Data.ip}`;
-        sendUserInfoToServer(username, userInfo);
-    });
-
-    userInfo.UserAgent = navigator.userAgent;
-    const screenWidth = window.screen.width;
-    const screenHeight = window.screen.height;
-    const deviceOrientation = window.orientation;
-    userInfo.ScreenInfo = `Resolution: ${screenWidth}x${screenHeight}, Orientation: ${deviceOrientation}`;
-    const userLanguage = navigator.language || navigator.userLanguage;
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    userInfo.LanguageTimezone = `Language: ${userLanguage}, Timezone: ${userTimezone}`;
-    userInfo.DeviceType = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
-    userInfo.Referrer = document.referrer || 'Direct visit';
-    userInfo.ConnectionType = navigator.connection ? navigator.connection.type : 'Not available';
-    userInfo.TouchScreen = 'maxTouchPoints' in navigator ? navigator.maxTouchPoints : 'Not available';
-    userInfo.DeviceMemory = navigator.deviceMemory || 'Not available';
-
-    if ('getBattery' in navigator) {
-        navigator.getBattery().then(function(battery) {
-            userInfo.Battery = `Level: ${Math.round(battery.level * 100)}%, Charging: ${battery.charging ? 'Yes' : 'No'}`;
-        });
-    }
-
-    userInfo.HardwareConcurrency = navigator.hardwareConcurrency || 'Not available';
-}
-
-function sendUserInfoToServer(username, userInfo) {
-    fetch('/log-user-info', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            'username': username,
-            'userInfo': userInfo
-        }),
-    });
-}
-
-logUserInfoAndSendToServer(storedUsername);
 
 // Function to send a message
 function sendMessage() {
@@ -236,7 +176,3 @@ function scrollToBottom() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function toggleInfoMenu() {
-    var infoMenu = document.getElementById('info-menu');
-    infoMenu.style.display = (infoMenu.style.display === 'none' || infoMenu.style.display === '') ? 'block' : 'none';
-}
