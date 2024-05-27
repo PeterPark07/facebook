@@ -21,7 +21,7 @@ def index():
         else:
             message_date = message.get('timestamp')[:10]
 
-            if message_date != last_date or last_date == '':
+            if message_date != last_date:
                 # Add a key to indicate a new date divider should be shown before this message
                 message['new_date'] = message_date
                 last_date = message_date
