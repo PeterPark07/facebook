@@ -40,10 +40,6 @@
             font-size: 14px;
         }
 
-        #chat-box p.golden {
-            color: gold;
-        }
-
         #message-form {
             display: flex;
             padding: 10px;
@@ -88,49 +84,6 @@
             border-radius: 5px;
         }
         #change-username-button { top: 120px; }
-
-        @keyframes bounce {
-            0%, 50%, 100% {
-                transform: translate(0, 0);
-            }
-            15% {
-                transform: translate(-5px, -5px);
-            }
-            35% {
-                transform: translate(5px, -5px);
-            }
-            65% {
-                transform: translate(-5px, 5px);
-            }
-            85% {
-                transform: translate(5px, 5px);
-            }
-        }
-
-        @keyframes colorChange {
-            0% {
-                color: red;
-            }
-            25% {
-                color: orange;
-            }
-            50% {
-                color: yellow;
-            }
-            75% {
-                color: green;
-            }
-            100% {
-                color: red;
-            }
-        }
-
-        #chat-box p.highlight {
-            animation: colorChange 2s infinite; 
-        }
-        #chat-box p.animate {
-            animation: bounce 2s 7;
-        }
 
         #chat-box p.system {
             color: #ad0202;
