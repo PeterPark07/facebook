@@ -146,7 +146,7 @@
                 {% if message.new_date %}
                     <div class="date-divider">{{ message.new_date }}</div>
                 {% endif %}
-                <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
+                <p class="{% if message.system %} system{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
                 </p>
             {% endfor %}
