@@ -40,6 +40,10 @@
             font-size: 14px;
         }
 
+        #chat-box p.golden {
+            color: gold;
+        }
+
         #message-form {
             display: flex;
             padding: 10px;
@@ -68,6 +72,27 @@
             border: none;
         }
 
+        #info-menu {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+
+        #info-menu-button {
+            position: absolute;
+            top: 45px;
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
         #delete-button,
         #scroll-bottom-btn,
         #change-username-button {
@@ -85,13 +110,73 @@
         }
         #change-username-button { top: 120px; }
 
+        @keyframes bounce {
+            0%, 50%, 100% {
+                transform: translate(0, 0);
+            }
+            15% {
+                transform: translate(-5px, -5px);
+            }
+            35% {
+                transform: translate(5px, -5px);
+            }
+            65% {
+                transform: translate(-5px, 5px);
+            }
+            85% {
+                transform: translate(5px, 5px);
+            }
+        }
+
+        @keyframes colorChange {
+            0% {
+                color: red;
+            }
+            25% {
+                color: orange;
+            }
+            50% {
+                color: yellow;
+            }
+            75% {
+                color: green;
+            }
+            100% {
+                color: red;
+            }
+        }
+
+        #chat-box p.highlight {
+            animation: colorChange 2s infinite; /* Add your animation properties here */
+        }
+        #chat-box p.animate {
+            animation: bounce 2s 7; /* Add your animation properties here */
+        }
+
         #chat-box p.system {
-            color: #ad0202;
+            color: #ad0202; /* Set the color for system notification messages */
             font-style: italic;
         }
     </style>
 </head>
 <body>
+    <!-- Info menu button -->
+    <div id="info-menu-button" onclick="toggleInfoMenu()">
+        <i class="fas fa-info-circle" style="font-size: 30px;"></i>
+    </div>
+
+    <!-- Info menu content -->
+    <div id="info-menu">
+        <p>Commands:</p>
+        <ul>
+            <li>/persist - Makes messages permanent.</li>
+            <li>/golden - Displays messages in golden color.</li>
+            <li>/animate - Adds animation to the messages.</li>
+            <li>/highlight - Flashes the message in various colours.</li>
+            <li>/delete [number] - Deletes recent messages. (default: 5, max: 20)</li>
+        </ul>
+    </div>
+
 
     <div id="chat-container">
         <div id="chat-box">
@@ -99,7 +184,7 @@
                 {% if message.new_date %}
                     <div class="date-divider">{{ message.new_date }}</div>
                 {% endif %}
-                <p class="{% if message.system %} system{% endif %}">
+                <p class="{% if message.golden %}golden{% endif %}{% if message.animate %} animate{% endif %}{% if message.highlight %} highlight{% endif %}{% if message.system %} system{% endif %}">
                     <strong>{{ message.display_time }} - {{ message.username }}:</strong> {{ message.message }}
                 </p>
             {% endfor %}
@@ -119,9 +204,7 @@
     </div>
 
     <!-- Reference the external JavaScript file -->
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
 
 </body>
 </html>
