@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     messages = list(messages_collection.find())
-    last_date = None
+    last_date = ''
 
     for message in messages:
         system = message.get('system')
